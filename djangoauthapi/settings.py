@@ -135,7 +135,7 @@ REST_FRAMEWORK = {
 }
 
 # Default User Model
-
+AUTH_USER_MODEL = "account.User"
 
 # JWT Settings
 
