@@ -10,6 +10,8 @@ from .serializers import (
     UserLoginSerializer,
     UserProfileSerializer,
     UserChangePasswordSerializer,
+    SendPasswordResetEmailSerializer,
+    UserPasswordResetSerializer,
 )
 from .renderers import UserRenderer
 
@@ -80,4 +82,29 @@ class UserChangePasswordView(APIView):
         serializer.is_valid(raise_exception=True)
         return Response(
             {"msg": "Password Changed Successfully"}, status=status.HTTP_200_OK
+        )
+
+
+class SendPasswordResetEmailView(APIView):
+    renderer_classes = [UserRenderer]
+
+    def post(self, request, format=None):
+        serializer = SendPasswordResetEmailSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response(
+            {"msg": "Password Reset email sent. Please check your email"},
+            status=status.HTTP_200_OK,
+        )
+
+
+class UserPasswordResetView(APIView):
+    renderer_classes = [UserRenderer]
+
+    def post(self, request, uid, token, format=None):
+        serializer = UserPasswordResetSerializer(
+            data=request.data, context={"uid": uid, "token": token}
+        )
+        serializer.is_valid(raise_exception=True)
+        return Response(
+            {"msg": "Password reset successfully"}, status=status.HTTP_200_OK
         )

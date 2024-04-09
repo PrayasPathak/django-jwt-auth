@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -137,6 +138,13 @@ REST_FRAMEWORK = {
 # Default User Model
 AUTH_USER_MODEL = "account.User"
 
+# Email Configuration
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.environ.get("EMAIL_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASS")
+EMAIL_USE_TLS = True
 # JWT Settings
 
 SIMPLE_JWT = {
@@ -162,6 +170,8 @@ SIMPLE_JWT = {
     "TOKEN_USER_CLASS": "rest_framework_simplejwt.models.TokenUser",
     "JTI_CLAIM": "jti",
 }
+
+PASSWORD_RESET_TIMEOUT = 900  # 15 min
 
 # Cors Settings
 CORS_ALLOWED_ORIGINS = [
