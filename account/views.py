@@ -1,9 +1,16 @@
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import APIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
+
 from django.contrib.auth import authenticate
-from .serializers import UserRegistrationSerializer, UserLoginSerializer
+from .serializers import (
+    UserRegistrationSerializer,
+    UserLoginSerializer,
+    UserProfileSerializer,
+    UserChangePasswordSerializer,
+)
 from .renderers import UserRenderer
 
 
@@ -51,3 +58,26 @@ class UserLoginView(APIView):
                 {"errors": {"non_field_errors": ["Email or password do not match"]}},
                 status=status.HTTP_404_NOT_FOUND,
             )
+
+
+class UserProfileView(APIView):
+    renderer_classes = [UserRenderer]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = UserProfileSerializer(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class UserChangePasswordView(APIView):
+    renderer_classes = [UserRenderer]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        serializer = UserChangePasswordSerializer(
+            data=request.data, context={"user": request.user}
+        )
+        serializer.is_valid(raise_exception=True)
+        return Response(
+            {"msg": "Password Changed Successfully"}, status=status.HTTP_200_OK
+        )
